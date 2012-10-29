@@ -1,97 +1,98 @@
-<?php
-/**
- * The template for displaying Archive pages.
- *
- * Learn more: http://codex.wordpress.org/Template_Hierarchy
- *
- * @package PFK
- * @since PFK 1.0
- */
+<?php get_header(); ?>
+			
+			<div id="content" class="clearfix row-fluid">
+			
+				<div id="main" class="span8 clearfix" role="main">
+				
+					<div class="page-header">
+					<?php if (is_category()) { ?>
+						<h1 class="archive_title h2">
+							<span><?php _e("Posts Categorized:", "pfk"); ?></span> <?php single_cat_title(); ?>
+						</h1>
+					<?php } elseif (is_tag()) { ?> 
+						<h1 class="archive_title h2">
+							<span><?php _e("Posts Tagged:", "pfk"); ?></span> <?php single_tag_title(); ?>
+						</h1>
+					<?php } elseif (is_author()) { ?>
+						<h1 class="archive_title h2">
+							<span><?php _e("Posts By:", "pfk"); ?></span> <?php get_the_author_meta('display_name'); ?>
+						</h1>
+					<?php } elseif (is_day()) { ?>
+						<h1 class="archive_title h2">
+							<span><?php _e("Daily Archives:", "pfk"); ?></span> <?php the_time('l, F j, Y'); ?>
+						</h1>
+					<?php } elseif (is_month()) { ?>
+					    <h1 class="archive_title h2">
+					    	<span><?php _e("Monthly Archives:", "pfk"); ?>:</span> <?php the_time('F Y'); ?>
+					    </h1>
+					<?php } elseif (is_year()) { ?>
+					    <h1 class="archive_title h2">
+					    	<span><?php _e("Yearly Archives:", "pfk"); ?>:</span> <?php the_time('Y'); ?>
+					    </h1>
+					<?php } ?>
+					</div>
 
-get_header(); ?>
+					<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+					
+					<article id="post-<?php the_ID(); ?>" <?php post_class('clearfix'); ?> role="article">
+						
+						<header>
+							
+							<h3 class="h2"><a href="<?php the_permalink() ?>" rel="bookmark" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a></h3>
+							
+							<p class="meta"><?php _e("Posted", "pfk"); ?> <time datetime="<?php echo the_time('Y-m-j'); ?>" pubdate><?php the_date(); ?></time> <?php _e("by", "pfk"); ?> <?php the_author_posts_link(); ?> <span class="amp">&</span> <?php _e("filed under", "pfk"); ?> <?php the_category(', '); ?>.</p>
+						
+						</header> <!-- end article header -->
+					
+						<section class="post_content">
+						
+							<?php the_post_thumbnail( 'wpbs-featured' ); ?>
+						
+							<?php the_excerpt(); ?>
+					
+						</section> <!-- end article section -->
+						
+						<footer>
+							
+						</footer> <!-- end article footer -->
+					
+					</article> <!-- end article -->
+					
+					<?php endwhile; ?>	
+					
+					<?php if (function_exists('page_navi')) { // if expirimental feature is active ?>
+						
+						<?php page_navi(); // use the page navi function ?>
 
-		<section id="primary" class="content-area">
-			<div id="content" class="site-content" role="main">
+					<?php } else { // if it is disabled, display regular wp prev & next links ?>
+						<nav class="wp-prev-next">
+							<ul class="clearfix">
+								<li class="prev-link"><?php next_posts_link(_e('&laquo; Older Entries', "pfk")) ?></li>
+								<li class="next-link"><?php previous_posts_link(_e('Newer Entries &raquo;', "pfk")) ?></li>
+							</ul>
+						</nav>
+					<?php } ?>
+								
+					
+					<?php else : ?>
+					
+					<article id="post-not-found">
+					    <header>
+					    	<h1><?php _e("No Posts Yet", "pfk"); ?></h1>
+					    </header>
+					    <section class="post_content">
+					    	<p><?php _e("Sorry, What you were looking for is not here.", "pfk"); ?></p>
+					    </section>
+					    <footer>
+					    </footer>
+					</article>
+					
+					<?php endif; ?>
+			
+				</div> <!-- end #main -->
+    
+				<?php get_sidebar(); // sidebar 1 ?>
+    
+			</div> <!-- end #content -->
 
-			<?php if ( have_posts() ) : ?>
-
-				<header class="page-header">
-					<h1 class="page-title">
-						<?php
-							if ( is_category() ) {
-								printf( __( 'Category Archives: %s', 'pfk' ), '<span>' . single_cat_title( '', false ) . '</span>' );
-
-							} elseif ( is_tag() ) {
-								printf( __( 'Tag Archives: %s', 'pfk' ), '<span>' . single_tag_title( '', false ) . '</span>' );
-
-							} elseif ( is_author() ) {
-								/* Queue the first post, that way we know
-								 * what author we're dealing with (if that is the case).
-								*/
-								the_post();
-								printf( __( 'Author Archives: %s', 'pfk' ), '<span class="vcard"><a class="url fn n" href="' . get_author_posts_url( get_the_author_meta( "ID" ) ) . '" title="' . esc_attr( get_the_author() ) . '" rel="me">' . get_the_author() . '</a></span>' );
-								/* Since we called the_post() above, we need to
-								 * rewind the loop back to the beginning that way
-								 * we can run the loop properly, in full.
-								 */
-								rewind_posts();
-
-							} elseif ( is_day() ) {
-								printf( __( 'Daily Archives: %s', 'pfk' ), '<span>' . get_the_date() . '</span>' );
-
-							} elseif ( is_month() ) {
-								printf( __( 'Monthly Archives: %s', 'pfk' ), '<span>' . get_the_date( 'F Y' ) . '</span>' );
-
-							} elseif ( is_year() ) {
-								printf( __( 'Yearly Archives: %s', 'pfk' ), '<span>' . get_the_date( 'Y' ) . '</span>' );
-
-							} else {
-								_e( 'Archives', 'pfk' );
-
-							}
-						?>
-					</h1>
-					<?php
-						if ( is_category() ) {
-							// show an optional category description
-							$category_description = category_description();
-							if ( ! empty( $category_description ) )
-								echo apply_filters( 'category_archive_meta', '<div class="taxonomy-description">' . $category_description . '</div>' );
-
-						} elseif ( is_tag() ) {
-							// show an optional tag description
-							$tag_description = tag_description();
-							if ( ! empty( $tag_description ) )
-								echo apply_filters( 'tag_archive_meta', '<div class="taxonomy-description">' . $tag_description . '</div>' );
-						}
-					?>
-				</header><!-- .page-header -->
-
-				<?php pfk_content_nav( 'nav-above' ); ?>
-
-				<?php /* Start the Loop */ ?>
-				<?php while ( have_posts() ) : the_post(); ?>
-
-					<?php
-						/* Include the Post-Format-specific template for the content.
-						 * If you want to overload this in a child theme then include a file
-						 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
-						 */
-						get_template_part( 'content', get_post_format() );
-					?>
-
-				<?php endwhile; ?>
-
-				<?php pfk_content_nav( 'nav-below' ); ?>
-
-			<?php else : ?>
-
-				<?php get_template_part( 'no-results', 'archive' ); ?>
-
-			<?php endif; ?>
-
-			</div><!-- #content .site-content -->
-		</section><!-- #primary .content-area -->
-
-<?php get_sidebar(); ?>
 <?php get_footer(); ?>

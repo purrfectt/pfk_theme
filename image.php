@@ -1,111 +1,139 @@
 <?php
 /**
- * The template for displaying image attachments.
+ * The WordPress template hierarchy first checks for any
+ * MIME-types and then looks for the attachment.php file.
  *
- * @package PFK
- * @since PFK 1.0
- */
+ * @link codex.wordpress.org/Template_Hierarchy#Attachment_display 
+ */ 
 
-get_header();
-?>
+get_header(); ?>
+			
+			<div id="content" class="clearfix row-fluid">
+			
+				<div id="main" class="span8 clearfix" role="main">
 
-		<div id="primary" class="content-area image-attachment">
-			<div id="content" class="site-content" role="main">
-
-			<?php while ( have_posts() ) : the_post(); ?>
-
-				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-					<header class="entry-header">
-						<h1 class="entry-title"><?php the_title(); ?></h1>
-
-						<div class="entry-meta">
-							<?php
-								$metadata = wp_get_attachment_metadata();
-								printf( __( 'Published <span class="entry-date"><time class="entry-date" datetime="%1$s" pubdate>%2$s</time></span> at <a href="%3$s" title="Link to full-size image">%4$s &times; %5$s</a> in <a href="%6$s" title="Return to %7$s" rel="gallery">%7$s</a>', 'pfk' ),
-									esc_attr( get_the_date( 'c' ) ),
-									esc_html( get_the_date() ),
-									wp_get_attachment_url(),
-									$metadata['width'],
-									$metadata['height'],
-									get_permalink( $post->post_parent ),
-									get_the_title( $post->post_parent )
-								);
-							?>
-							<?php edit_post_link( __( 'Edit', 'pfk' ), '<span class="sep"> | </span> <span class="edit-link">', '</span>' ); ?>
-						</div><!-- .entry-meta -->
-
-						<nav id="image-navigation" class="site-navigation">
-							<span class="previous-image"><?php previous_image_link( false, __( '&larr; Previous', 'pfk' ) ); ?></span>
-							<span class="next-image"><?php next_image_link( false, __( 'Next &rarr;', 'pfk' ) ); ?></span>
-						</nav><!-- #image-navigation -->
-					</header><!-- .entry-header -->
-
-					<div class="entry-content">
-
-						<div class="entry-attachment">
-							<div class="attachment">
-								<?php
-									/**
-									 * Grab the IDs of all the image attachments in a gallery so we can get the URL of the next adjacent image in a gallery,
-									 * or the first image (if we're looking at the last image in a gallery), or, in a gallery of one, just the link to that image file
-									 */
-									$attachments = array_values( get_children( array( 'post_parent' => $post->post_parent, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => 'ASC', 'orderby' => 'menu_order ID' ) ) );
-									foreach ( $attachments as $k => $attachment ) {
-										if ( $attachment->ID == $post->ID )
-											break;
-									}
-									$k++;
-									// If there is more than 1 attachment in a gallery
-									if ( count( $attachments ) > 1 ) {
-										if ( isset( $attachments[ $k ] ) )
-											// get the URL of the next image attachment
-											$next_attachment_url = get_attachment_link( $attachments[ $k ]->ID );
-										else
-											// or get the URL of the first image attachment
-											$next_attachment_url = get_attachment_link( $attachments[ 0 ]->ID );
-									} else {
-										// or, if there's only 1 image, get the URL of the image
-										$next_attachment_url = wp_get_attachment_url();
-									}
-								?>
-
-								<a href="<?php echo $next_attachment_url; ?>" title="<?php echo esc_attr( get_the_title() ); ?>" rel="attachment"><?php
-									$attachment_size = apply_filters( 'pfk_attachment_size', array( 1200, 1200 ) ); // Filterable image size.
-									echo wp_get_attachment_image( $post->ID, $attachment_size );
-								?></a>
-							</div><!-- .attachment -->
-
-							<?php if ( ! empty( $post->post_excerpt ) ) : ?>
-							<div class="entry-caption">
-								<?php the_excerpt(); ?>
-							</div><!-- .entry-caption -->
-							<?php endif; ?>
-						</div><!-- .entry-attachment -->
-
-						<?php the_content(); ?>
-						<?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'pfk' ), 'after' => '</div>' ) ); ?>
-
-					</div><!-- .entry-content -->
-
-					<footer class="entry-meta">
-						<?php if ( comments_open() && pings_open() ) : // Comments and trackbacks open ?>
-							<?php printf( __( '<a class="comment-link" href="#respond" title="Post a comment">Post a comment</a> or leave a trackback: <a class="trackback-link" href="%s" title="Trackback URL for your post" rel="trackback">Trackback URL</a>.', 'pfk' ), get_trackback_url() ); ?>
-						<?php elseif ( ! comments_open() && pings_open() ) : // Only trackbacks open ?>
-							<?php printf( __( 'Comments are closed, but you can leave a trackback: <a class="trackback-link" href="%s" title="Trackback URL for your post" rel="trackback">Trackback URL</a>.', 'pfk' ), get_trackback_url() ); ?>
-						<?php elseif ( comments_open() && ! pings_open() ) : // Only comments open ?>
-							<?php _e( 'Trackbacks are closed, but you can <a class="comment-link" href="#respond" title="Post a comment">post a comment</a>.', 'pfk' ); ?>
-						<?php elseif ( ! comments_open() && ! pings_open() ) : // Comments and trackbacks closed ?>
-							<?php _e( 'Both comments and trackbacks are currently closed.', 'pfk' ); ?>
-						<?php endif; ?>
-						<?php edit_post_link( __( 'Edit', 'pfk' ), ' <span class="edit-link">', '</span>' ); ?>
-					</footer><!-- .entry-meta -->
-				</article><!-- #post-<?php the_ID(); ?> -->
-
-				<?php comments_template(); ?>
-
-			<?php endwhile; // end of the loop. ?>
-
-			</div><!-- #content .site-content -->
-		</div><!-- #primary .content-area .image-attachment -->
+					<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+					
+					<article id="post-<?php the_ID(); ?>" <?php post_class('clearfix'); ?> role="article" itemscope itemtype="http://schema.org/BlogPosting">
+						
+						<header> 
+							
+							<div class="page-header"><h1 class="single-title" itemprop="headline"><a href="<?php echo get_permalink($post->post_parent); ?>" rev="attachment"><?php echo get_the_title($post->post_parent); ?></a> &raquo; <?php the_title(); ?></h1></div>
+							
+							<p class="meta"><?php _e("Posted", "pfk"); ?> <time datetime="<?php echo the_time('Y-m-j'); ?>" pubdate><?php the_date(); ?></time> <?php _e("by", "pfk"); ?> <?php the_author_posts_link(); ?>.</p>
+						
+						</header> <!-- end article header -->
+					
+						<section class="post_content clearfix" itemprop="articleBody">
+							
+							<!-- To display current image in the photo gallery -->
+							<div class="attachment-img">
+							      <a href="<?php echo wp_get_attachment_url($post->ID); ?>">
+							      							      
+							      <?php 
+							      	$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'large' ); 
+							       
+								      if ($image) : ?>
+								          <img src="<?php echo $image[0]; ?>" alt="" />
+								      <?php endif; ?>
+							      
+							      </a>
+							</div>
+							
+							<!-- To display thumbnail of previous and next image in the photo gallery -->
+							<ul id="gallery-nav" class="clearfix">
+								<li class="next pull-left"><?php next_image_link() ?></li>
+								<li class="previous pull-right"><?php previous_image_link() ?></li>
+							</ul>
+							
+						</section> <!-- end article section -->
+						
+						<footer>
+			
+							<?php the_tags('<p class="tags"><span class="tags-title">' . __("Tags","pfk") . ':</span> ', ' ', '</p>'); ?>
+							
+						</footer> <!-- end article footer -->
+					
+					</article> <!-- end article -->
+					
+					<?php comments_template(); ?>
+					
+					<?php endwhile; ?>			
+					
+					<?php else : ?>
+					
+					<article id="post-not-found">
+					    <header>
+					    	<h1><?php _e("Not Found", "pfk"); ?></h1>
+					    </header>
+					    <section class="post_content">
+					    	<p><?php _e("Sorry, but the requested resource was not found on this site.", "pfk"); ?></p>
+					    </section>
+					    <footer>
+					    </footer>
+					</article>
+					
+					<?php endif; ?>
+			
+				</div> <!-- end #main -->
+				
+				<div id="sidebar1" class="span4 fluid-sidebar sidebar" role="complementary">
+				
+					<?php if ( !empty($post->post_excerpt) ) { ?> 
+					<p class="alert alert-block success"><?php echo get_the_excerpt(); ?></p>
+					<?php } ?>
+								
+					<!-- Using WordPress functions to retrieve the extracted EXIF information from database -->
+					<div class="well">
+					
+						<h3><?php _e("Image metadata","pfk"); ?></h3>
+					
+					   <?php
+					      $imgmeta = wp_get_attachment_metadata( $id );
+					
+					// Convert the shutter speed retrieve from database to fraction
+					      if ((1 / $imgmeta['image_meta']['shutter_speed']) > 1)
+					      {
+					         if ((number_format((1 / $imgmeta['image_meta']['shutter_speed']), 1)) == 1.3
+					         or number_format((1 / $imgmeta['image_meta']['shutter_speed']), 1) == 1.5
+					         or number_format((1 / $imgmeta['image_meta']['shutter_speed']), 1) == 1.6
+					         or number_format((1 / $imgmeta['image_meta']['shutter_speed']), 1) == 2.5){
+					            $pshutter = "1/" . number_format((1 / $imgmeta['image_meta']['shutter_speed']), 1, '.', '') . " second";
+					         }
+					         else{
+					           $pshutter = "1/" . number_format((1 / $imgmeta['image_meta']['shutter_speed']), 0, '.', '') . " second";
+					         }
+					      }
+					      else{
+					         $pshutter = $imgmeta['image_meta']['shutter_speed'] . " seconds";
+					       }
+					
+					// Start to display EXIF and IPTC data of digital photograph
+					       if ( $imgmeta['image_meta']['created_timestamp'] ) { 
+					           echo __("Date Taken","pfk") . ": " . date("d-M-Y H:i:s", $imgmeta['image_meta']['created_timestamp'])."<br />"; }
+					       if ( $imgmeta['image_meta']['copyright'] ) { 
+					           echo __("Copyright","pfk") . ": " . $imgmeta['image_meta']['copyright']."<br />"; }
+					       if ( $imgmeta['image_meta']['credit'] ) { 
+					           echo __("Credit","pfk") . ": " . $imgmeta['image_meta']['credit']."<br />"; }
+					       if ( $imgmeta['image_meta']['title'] ) { 
+					           echo __("Title","pfk") . ": " . $imgmeta['image_meta']['title']."<br />"; }
+					       if ( $imgmeta['image_meta']['caption'] ) { 
+					           echo __("Caption","pfk") . ": " . $imgmeta['image_meta']['caption']."<br />"; }
+					       if ( $imgmeta['image_meta']['camera'] ) { 
+					           echo __("Camera","pfk") . ": " . $imgmeta['image_meta']['camera']."<br />"; }
+					       if ( $imgmeta['image_meta']['focal_length'] ) { 
+					           echo __("Focal Length","pfk") . ": " . $imgmeta['image_meta']['focal_length']."mm<br />"; }
+					       if ( $imgmeta['image_meta']['aperture'] ) { 
+					           echo __("Aperture","pfk") . ": f/" . $imgmeta['image_meta']['aperture']."<br />"; }
+					       if ( $imgmeta['image_meta']['iso'] ) { 
+					           echo __("ISO","pfk") . ": " . $imgmeta['image_meta']['iso']."<br />"; }
+					       if ( $pshutter ) { 
+					           echo __("Shutter Speed","pfk") . ": " . $pshutter . "<br />"; }
+					   ?>
+					</div>
+					
+				</div>
+    
+			</div> <!-- end #content -->
 
 <?php get_footer(); ?>

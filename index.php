@@ -1,49 +1,86 @@
-<?php
-/**
- * The main template file.
- *
- * This is the most generic template file in a WordPress theme
- * and one of the two required files for a theme (the other being style.css).
- * It is used to display a page when nothing more specific matches a query.
- * E.g., it puts together the home page when no home.php file exists.
- * Learn more: http://codex.wordpress.org/Template_Hierarchy
- *
- * @package PFK
- * @since PFK 1.0
- */
+<?php get_header(); ?>
+			
+			<?php
+				$blog_hero = of_get_option('blog_hero');
+				if ($blog_hero){
+			?>
+			<div class="clearfix row-fluid">
+				<div class="hero-unit">
+				
+					<h1><?php bloginfo('title'); ?></h1>
+					
+					<p><?php bloginfo('description'); ?></p>
+				
+				</div>
+			</div>
+			<?php
+				}
+			?>
+			
+			<div id="content" class="clearfix row-fluid">
+			
+				<div id="main" class="span8 clearfix" role="main">
 
-get_header(); ?>
+					<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+					
+					<article id="post-<?php the_ID(); ?>" <?php post_class('clearfix'); ?> role="article">
+						
+						<header>
+						
+							<a href="<?php the_permalink() ?>" title="<?php the_title_attribute(); ?>"><?php the_post_thumbnail( 'wpbs-featured' ); ?></a>
+							
+							<div class="page-header"><h1 class="h2"><a href="<?php the_permalink() ?>" rel="bookmark" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1></div>
+							
+							<p class="meta"><?php _e("Posted", "pfk"); ?> <time datetime="<?php echo the_time('Y-m-j'); ?>" pubdate><?php the_date(); ?></time> <?php _e("by", "pfk"); ?> <?php the_author_posts_link(); ?> <span class="amp">&</span> <?php _e("filed under", "pfk"); ?> <?php the_category(', '); ?>.</p>
+						
+						</header> <!-- end article header -->
+					
+						<section class="post_content clearfix">
+							<?php the_content( __("Read more &raquo;","pfk") ); ?>
+						</section> <!-- end article section -->
+						
+						<footer>
+			
+							<p class="tags"><?php the_tags('<span class="tags-title">' . __("Tags","pfk") . ':</span> ', ' ', ''); ?></p>
+							
+						</footer> <!-- end article footer -->
+					
+					</article> <!-- end article -->
+					
+					<?php endwhile; ?>	
+					
+					<?php if (function_exists('page_navi')) { // if expirimental feature is active ?>
+						
+						<?php page_navi(); // use the page navi function ?>
+						
+					<?php } else { // if it is disabled, display regular wp prev & next links ?>
+						<nav class="wp-prev-next">
+							<ul class="clearfix">
+								<li class="prev-link"><?php next_posts_link(_e('&laquo; Older Entries', "pfk")) ?></li>
+								<li class="next-link"><?php previous_posts_link(_e('Newer Entries &raquo;', "pfk")) ?></li>
+							</ul>
+						</nav>
+					<?php } ?>		
+					
+					<?php else : ?>
+					
+					<article id="post-not-found">
+					    <header>
+					    	<h1><?php _e("Not Found", "pfk"); ?></h1>
+					    </header>
+					    <section class="post_content">
+					    	<p><?php _e("Sorry, but the requested resource was not found on this site.", "pfk"); ?></p>
+					    </section>
+					    <footer>
+					    </footer>
+					</article>
+					
+					<?php endif; ?>
+			
+				</div> <!-- end #main -->
+    
+				<?php get_sidebar(); // sidebar 1 ?>
+    
+			</div> <!-- end #content -->
 
-		<div id="primary" class="content-area">
-			<div id="content" class="site-content" role="main">
-
-			<?php if ( have_posts() ) : ?>
-
-				<?php pfk_content_nav( 'nav-above' ); ?>
-
-				<?php /* Start the Loop */ ?>
-				<?php while ( have_posts() ) : the_post(); ?>
-
-					<?php
-						/* Include the Post-Format-specific template for the content.
-						 * If you want to overload this in a child theme then include a file
-						 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
-						 */
-						get_template_part( 'content', get_post_format() );
-					?>
-
-				<?php endwhile; ?>
-
-				<?php pfk_content_nav( 'nav-below' ); ?>
-
-			<?php else : ?>
-
-				<?php get_template_part( 'no-results', 'index' ); ?>
-
-			<?php endif; ?>
-
-			</div><!-- #content .site-content -->
-		</div><!-- #primary .content-area -->
-
-<?php get_sidebar(); ?>
 <?php get_footer(); ?>

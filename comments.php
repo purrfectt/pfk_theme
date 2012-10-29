@@ -1,76 +1,157 @@
 <?php
-/**
- * The template for displaying Comments.
- *
- * The area of the page that contains both current comments
- * and the comment form. The actual display of comments is
- * handled by a callback to pfk_comment() which is
- * located in the functions.php file.
- *
- * @package PFK
- * @since PFK 1.0
- */
+/*
+The comments page for PFK
+*/
+
+// Do not delete these lines
+  if (!empty($_SERVER['SCRIPT_FILENAME']) && 'comments.php' == basename($_SERVER['SCRIPT_FILENAME']))
+    die ('Please do not load this page directly. Thanks!');
+
+  if ( post_password_required() ) { ?>
+  	<div class="alert alert-info"><?php _e("This post is password protected. Enter the password to view comments.","pfk"); ?></div>
+  <?php
+    return;
+  }
 ?>
 
-<?php
-	/*
-	 * If the current post is protected by a password and
-	 * the visitor has not yet entered the password we will
-	 * return early without loading the comments.
-	 */
-	if ( post_password_required() )
-		return;
-?>
+<!-- You can start editing here. -->
 
-	<div id="comments" class="comments-area">
+<?php if ( have_comments() ) : ?>
+	<?php if ( ! empty($comments_by_type['comment']) ) : ?>
+	<h3 id="comments"><?php comments_number('<span>' . __("No","pfk") . '</span> ' . __("Responses","pfk") . '', '<span>' . __("One","pfk") . '</span> ' . __("Response","pfk") . '', '<span>%</span> ' . __("Responses","pfk") );?> <?php _e("to","pfk"); ?> &#8220;<?php the_title(); ?>&#8221;</h3>
 
-	<?php // You can start editing here -- including this comment! ?>
+	<nav id="comment-nav">
+		<ul class="clearfix">
+	  		<li><?php previous_comments_link( __("Older comments","pfk") ) ?></li>
+	  		<li><?php next_comments_link( __("Newer comments","pfk") ) ?></li>
+	 	</ul>
+	</nav>
+	
+	<ol class="commentlist">
+		<?php wp_list_comments('type=comment&callback=pfk_comments'); ?>
+	</ol>
+	
+	<?php endif; ?>
+	
+	<?php if ( ! empty($comments_by_type['pings']) ) : ?>
+		<h3 id="pings">Trackbacks/Pingbacks</h3>
+		
+		<ol class="pinglist">
+			<?php wp_list_comments('type=pings&callback=list_pings'); ?>
+		</ol>
+	<?php endif; ?>
+	
+	<nav id="comment-nav">
+		<ul class="clearfix">
+	  		<li><?php previous_comments_link( __("Older comments","pfk") ) ?></li>
+	  		<li><?php next_comments_link( __("Newer comments","pfk") ) ?></li>
+		</ul>
+	</nav>
+  
+	<?php else : // this is displayed if there are no comments so far ?>
 
-	<?php if ( have_comments() ) : ?>
-		<h2 class="comments-title">
-			<?php
-				printf( _n( 'One thought on &ldquo;%2$s&rdquo;', '%1$s thoughts on &ldquo;%2$s&rdquo;', get_comments_number(), 'pfk' ),
-					number_format_i18n( get_comments_number() ), '<span>' . get_the_title() . '</span>' );
-			?>
-		</h2>
+	<?php if ( comments_open() ) : ?>
+    	<!-- If comments are open, but there are no comments. -->
 
-		<?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : // are there comments to navigate through ?>
-		<nav role="navigation" id="comment-nav-above" class="site-navigation comment-navigation">
-			<h1 class="assistive-text"><?php _e( 'Comment navigation', 'pfk' ); ?></h1>
-			<div class="nav-previous"><?php previous_comments_link( __( '&larr; Older Comments', 'pfk' ) ); ?></div>
-			<div class="nav-next"><?php next_comments_link( __( 'Newer Comments &rarr;', 'pfk' ) ); ?></div>
-		</nav><!-- #comment-nav-before .site-navigation .comment-navigation -->
-		<?php endif; // check for comment navigation ?>
-
-		<ol class="commentlist">
-			<?php
-				/* Loop through and list the comments. Tell wp_list_comments()
-				 * to use pfk_comment() to format the comments.
-				 * If you want to overload this in a child theme then you can
-				 * define pfk_comment() and that will be used instead.
-				 * See pfk_comment() in inc/template-tags.php for more.
-				 */
-				wp_list_comments( array( 'callback' => 'pfk_comment' ) );
-			?>
-		</ol><!-- .commentlist -->
-
-		<?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : // are there comments to navigate through ?>
-		<nav role="navigation" id="comment-nav-below" class="site-navigation comment-navigation">
-			<h1 class="assistive-text"><?php _e( 'Comment navigation', 'pfk' ); ?></h1>
-			<div class="nav-previous"><?php previous_comments_link( __( '&larr; Older Comments', 'pfk' ) ); ?></div>
-			<div class="nav-next"><?php next_comments_link( __( 'Newer Comments &rarr;', 'pfk' ) ); ?></div>
-		</nav><!-- #comment-nav-below .site-navigation .comment-navigation -->
-		<?php endif; // check for comment navigation ?>
-
-	<?php endif; // have_comments() ?>
-
-	<?php
-		// If comments are closed and there are comments, let's leave a little note, shall we?
-		if ( ! comments_open() && '0' != get_comments_number() && post_type_supports( get_post_type(), 'comments' ) ) :
+	<?php else : // comments are closed 
 	?>
-		<p class="nocomments"><?php _e( 'Comments are closed.', 'pfk' ); ?></p>
+	
+	<?php
+		$suppress_comments_message = of_get_option('suppress_comments_message');
+
+		if (is_page() && $suppress_comments_message) :
+	?>
+			
+		<?php else : ?>
+		
+			<!-- If comments are closed. -->
+			<p class="alert alert-info"><?php _e("Comments are closed","pfk"); ?>.</p>
+			
+		<?php endif; ?>
+
 	<?php endif; ?>
 
-	<?php comment_form(); ?>
+<?php endif; ?>
 
-</div><!-- #comments .comments-area -->
+
+<?php if ( comments_open() ) : ?>
+
+<section id="respond" class="respond-form">
+
+	<h3 id="comment-form-title"><?php comment_form_title( __("Leave a Reply","pfk"), __("Leave a Reply to","pfk") . ' %s' ); ?></h3>
+
+	<div id="cancel-comment-reply">
+		<p class="small"><?php cancel_comment_reply_link( __("Cancel","pfk") ); ?></p>
+	</div>
+
+	<?php if ( get_option('comment_registration') && !is_user_logged_in() ) : ?>
+  	<div class="help">
+  		<p><?php _e("You must be","pfk"); ?> <a href="<?php echo wp_login_url( get_permalink() ); ?>"><?php _e("logged in","pfk"); ?></a> <?php _e("to post a comment","pfk"); ?>.</p>
+  	</div>
+	<?php else : ?>
+
+	<form action="<?php echo get_option('siteurl'); ?>/wp-comments-post.php" method="post" class="form-vertical" id="commentform">
+
+	<?php if ( is_user_logged_in() ) : ?>
+
+	<p class="comments-logged-in-as"><?php _e("Logged in as","pfk"); ?> <a href="<?php echo get_option('siteurl'); ?>/wp-admin/profile.php"><?php echo $user_identity; ?></a>. <a href="<?php echo wp_logout_url(get_permalink()); ?>" title="<?php _e("Log out of this account","pfk"); ?>"><?php _e("Log out","pfk"); ?> &raquo;</a></p>
+
+	<?php else : ?>
+	
+	<ul id="comment-form-elements" class="clearfix">
+		
+		<li>
+			<div class="control-group">
+			  <label for="author"><?php _e("Name","pfk"); ?> <?php if ($req) echo "(required)"; ?></label>
+			  <div class="input-prepend">
+			  	<span class="add-on"><i class="icon-user"></i></span><input type="text" name="author" id="author" value="<?php echo esc_attr($comment_author); ?>" placeholder="<?php _e("Your Name","pfk"); ?>" tabindex="1" <?php if ($req) echo "aria-required='true'"; ?> />
+			  </div>
+		  	</div>
+		</li>
+		
+		<li>
+			<div class="control-group">
+			  <label for="email"><?php _e("Mail","pfk"); ?> <?php if ($req) echo "(required)"; ?></label>
+			  <div class="input-prepend">
+			  	<span class="add-on"><i class="icon-envelope"></i></span><input type="email" name="email" id="email" value="<?php echo esc_attr($comment_author_email); ?>" placeholder="<?php _e("Your Email","pfk"); ?>" tabindex="2" <?php if ($req) echo "aria-required='true'"; ?> />
+			  	<span class="help-inline">(<?php _e("will not be published","pfk"); ?>)</span>
+			  </div>
+		  	</div>
+		</li>
+		
+		<li>
+			<div class="control-group">
+			  <label for="url"><?php _e("Website","pfk"); ?></label>
+			  <div class="input-prepend">
+			  <span class="add-on"><i class="icon-home"></i></span><input type="url" name="url" id="url" value="<?php echo esc_attr($comment_author_url); ?>" placeholder="<?php _e("Your Website","pfk"); ?>" tabindex="3" />
+			  </div>
+		  	</div>
+		</li>
+		
+	</ul>
+
+	<?php endif; ?>
+	
+	<div class="clearfix">
+		<div class="input">
+			<textarea name="comment" id="comment" placeholder="<?php _e("Your Comment Here…","pfk"); ?>" tabindex="4"></textarea>
+		</div>
+	</div>
+	
+	<div class="form-actions">
+	  <input class="btn btn-primary" name="submit" type="submit" id="submit" tabindex="5" value="<?php _e("Submit Comment","pfk"); ?>" />
+	  <?php comment_id_fields(); ?>
+	</div>
+	
+	<?php 
+		//comment_form();
+		do_action('comment_form()', $post->ID); 
+	
+	?>
+	
+	</form>
+	
+	<?php endif; // If registration required and not logged in ?>
+</section>
+
+<?php endif; // if you delete this the sky will fall on your head ?>

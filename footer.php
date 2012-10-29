@@ -1,27 +1,37 @@
-<?php
-/**
- * The template for displaying the footer.
- *
- * Contains the closing of the id=main div and all content after
- *
- * @package PFK
- * @since PFK 1.0
- */
-?>
+			<footer role="contentinfo">
+			
+				<div id="inner-footer" class="clearfix">
+		          <hr />
+		          <div id="widget-footer" class="clearfix row-fluid">
+		            <?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('footer1') ) : ?>
+		            <?php endif; ?>
+		            <?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('footer2') ) : ?>
+		            <?php endif; ?>
+		            <?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('footer3') ) : ?>
+		            <?php endif; ?>
+		          </div>
+					
+					<nav class="clearfix">
+						<?php pfk_footer_links(); // Adjust using Menus in Wordpress Admin ?>
+					</nav>
+					
+					<p class="pull-right"><a href="http://320press.com" id="credit320" title="By the dudes of 320press">320press</a></p>
+			
+					<p class="attribution">&copy; <?php bloginfo('name'); ?></p>
+				
+				</div> <!-- end #inner-footer -->
+				
+			</footer> <!-- end footer -->
+		
+		</div> <!-- end #container -->
+				
+		<!--[if lt IE 7 ]>
+  			<script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+  			<script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+		<![endif]-->
+		
+		<?php wp_footer(); // js scripts are inserted using this function ?>
 
-	</div><!-- #main .site-main -->
+	</body>
 
-	<footer id="colophon" class="site-footer" role="contentinfo">
-		<div class="site-info">
-			<?php do_action( 'pfk_credits' ); ?>
-			<a href="http://wordpress.org/" title="<?php esc_attr_e( 'A Semantic Personal Publishing Platform', 'pfk' ); ?>" rel="generator"><?php printf( __( 'Proudly powered by %s', 'pfk' ), 'WordPress' ); ?></a>
-			<span class="sep"> | </span>
-			<?php printf( __( 'Theme: %1$s by %2$s.', 'pfk' ), 'pfk', '<a href="http://automattic.com/" rel="designer">Automattic</a>' ); ?>
-		</div><!-- .site-info -->
-	</footer><!-- #colophon .site-footer -->
-</div><!-- #page .hfeed .site -->
-
-<?php wp_footer(); ?>
-
-</body>
 </html>
