@@ -840,9 +840,6 @@
     padding: 10px;
     margin: -10px;
   }
-  .carousel-caption {
-    position: static;
-  }
 }
 @media (max-width: 979px) {
   body {
