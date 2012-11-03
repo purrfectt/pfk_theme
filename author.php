@@ -34,7 +34,7 @@
 					
 						<section class="post_content">
 						
-							<?php the_post_thumbnail( 'wpbs-featured' ); ?>
+							<?php the_post_thumbnail( 'pfk-featured' ); ?>
 						
 							<?php the_excerpt(); ?>
 					

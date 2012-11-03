@@ -24,7 +24,7 @@ require_once('library/shortcodes.php');
 // Custom Backend Footer
 add_filter('admin_footer_text', 'pfk_custom_admin_footer');
 function pfk_custom_admin_footer() {
-	echo '<span id="footer-thankyou">Developed by <a href="http://320press.com" target="_blank">320press</a></span>. Built using <a href="http://themble.com/bones" target="_blank">Bones</a>.';
+	echo '<span id="footer-thankyou">Developed by <a href="http://evanpayne.com" target="_blank">Evan Payne</a></span>. Built using <a href="http://themble.com/bones" target="_blank">Bones</a>.';
 }
 
 // adding it to the admin area
@@ -36,8 +36,8 @@ if ( ! isset( $content_width ) ) $content_width = 580;
 /************* THUMBNAIL SIZE OPTIONS *************/
 
 // Thumbnail sizes
-add_image_size( 'wpbs-featured', 638, 300, true );
-add_image_size( 'wpbs-featured-home', 970, 311, true);
+add_image_size( 'pfk-featured', 638, 300, true );
+add_image_size( 'pfk-featured-home', 970, 311, true);
 add_image_size( 'pfk-thumb-600', 600, 150, false );
 add_image_size( 'pfk-thumb-300', 300, 100, true );
 /* 
@@ -496,7 +496,7 @@ function theme_js(){
   // wp_register_script('bootstrap-transition', get_template_directory_uri().'/library/js/bootstrap-transition.js');
   // wp_register_script('bootstrap-typeahead', get_template_directory_uri().'/library/js/bootstrap-typeahead.js');
 
-  wp_register_script('wpbs-scripts', get_template_directory_uri().'/library/js/scripts.js');
+  wp_register_script('pfk-scripts', get_template_directory_uri().'/library/js/scripts.js');
   wp_register_script('modernizr', get_template_directory_uri().'/library/js/modernizr.full.min.js');
 
   // wp_enqueue_script('less', array(''), '1.3.0', true);
@@ -512,7 +512,7 @@ function theme_js(){
   // wp_enqueue_script('bootstrap-tab', array('jQuery'), '1.1', true);
   // wp_enqueue_script('bootstrap-transition', array('jQuery'), '1.1', true);
   // wp_enqueue_script('bootstrap-typeahead', array('jQuery'), '1.1', true);
-  wp_enqueue_script('wpbs-scripts', array('jQuery'), '1.1', true);
+  wp_enqueue_script('pfk-scripts', array('jQuery'), '1.1', true);
   wp_enqueue_script('modernizr', array('jQuery'), '1.1', true);
 }
 add_action('wp_enqueue_scripts', 'theme_js');
