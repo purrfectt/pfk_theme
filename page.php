@@ -1,8 +1,8 @@
 <?php get_header(); ?>
 			
 			<div id="content" class="clearfix row-fluid">
-			
-				<div id="main" class="span8 clearfix" role="main">
+		
+				<div id="main" class="span12 clearfix" role="main">
 
 					<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 					
@@ -10,24 +10,40 @@
 						
 						<header>
 							
-							<div class="page-header"><h1 class="page-title" itemprop="headline"><?php the_title(); ?></h1></div>
+							<div class="page-header"><h1 class="page-title" itemprop="headline"></h1></div>
 						
 						</header> <!-- end article header -->
 					
 						<section class="post_content clearfix" itemprop="articleBody">
-							<?php the_content(); ?>
+							<table width="100%" border="0" cellspacing="0" cellpadding="0">
+								<tr>
+								    <td align="left" valign="top">&nbsp;</td>
+								    <td width="950" align="left" valign="top">
+										<div id="body_pieces_main_table">
+											<div id="display_text">
+												<div id="display_text_box">
+													<div id="text1">
+														<?php the_content(); ?>
+													</div>
+												</div>
+											</div>
+											<div id="display_mainphoto">
+												<div id="mainphoto">
+											  		<div id="Layer11"><?php the_post_thumbnail( 'pfk-page' ); ?></div>
+												</div>
+											</div>
+											<div id="display_subnav">
+												<div id="subnav_rows3"><?php the_title(); ?></div>
+											</div>
+										</div>
+									</td>
+								    <td align="left" valign="top">&nbsp;</td>
+								</tr>
+							</table>
 					
 						</section> <!-- end article section -->
 						
-						<footer>
-			
-							<?php the_tags('<p class="tags"><span class="tags-title">' . __("Tags","pfk") . ':</span> ', ', ', '</p>'); ?>
-							
-						</footer> <!-- end article footer -->
-					
 					</article> <!-- end article -->
-					
-					<?php comments_template('',true); ?>
 					
 					<?php endwhile; ?>		
 					
@@ -47,9 +63,7 @@
 					<?php endif; ?>
 			
 				</div> <!-- end #main -->
-    
-				<?php get_sidebar(); // sidebar 1 ?>
-    
+        
 			</div> <!-- end #content -->
 
 <?php get_footer(); ?>

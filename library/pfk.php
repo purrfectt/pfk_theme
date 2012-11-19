@@ -78,6 +78,7 @@ function pfk_theme_support() {
 	register_nav_menus(                      // wp3+ menus
 		array( 
 			'main_nav' => 'The Main Menu',   // main nav in header
+			'gallery_nav' => 'Gallery Menu', // special nav for gallery template
 			'footer_links' => 'Footer Links' // secondary nav in footer
 		)
 	);	
@@ -107,6 +108,20 @@ function pfk_main_nav() {
     );
 }
 
+function pfk_gallery_nav() {
+	// display the wp3 menu if available
+    wp_nav_menu( 
+    	array( 
+    		'menu' => 'gallery_nav', /* menu name */
+    		'menu_class' => 'subnav',
+    		'theme_location' => 'gallery_nav', /* where in the theme it's assigned */
+    		'container' => 'false', /* container class */
+    		'fallback_cb' => 'pfk_gallery_nav_fallback', /* menu fallback */
+    		'depth' => '1', /* suppress lower levels for now */
+    	)
+    );
+}
+
 function pfk_footer_links() { 
 	// display the wp3 menu if available
     wp_nav_menu(
@@ -123,6 +138,11 @@ function pfk_footer_links() {
 function pfk_main_nav_fallback() { 
 	// Figure out how to make this output bootstrap-friendly html
 	//wp_page_menu( 'show_home=Home&menu_class=nav' ); 
+}
+
+// this is the fallback for gallery menu
+function pfk_gallery_nav_fallback() { 
+	/* you can put a default here if you like */ 
 }
 
 // this is the fallback for footer menu

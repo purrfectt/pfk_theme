@@ -6,11 +6,14 @@ Template Name: Homepage
 
 <?php get_header(); ?>
 			
-			<div id="content" class="clearfix row-fluid">
+			<div id="content" class="clearfix row-fluid ring-page">
 			
 				<div id="main" class="span12 clearfix" role="main">
 
 					<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+
+					<?php $pfk_story = get_field('pfk_story'); ?>
+
 					
 					<article id="post-<?php the_ID(); ?>" <?php post_class('clearfix'); ?> role="article">
 					
@@ -29,22 +32,48 @@ Template Name: Homepage
 							</div>
 
 						</header>
+
+						<section class="row-fluid post_subheader">
+							<div class="span8 box" id="photo-box">
+								<img src="<?php the_field('pfk_main_image'); ?>" alt="The Ring of Kerry"/>
+								<p>Reconnected...</p>
+							</div>
+							<div class="span4 box">
+								<?php
+									$args = array( 'post_type' => 'product', 'posts_per_page' => 1 );
+									$loop = new WP_Query( $args );
+									while ( $loop->have_posts() ) : $loop->the_post(); global $product; ?>
+											
+											<?php woocommerce_get_template_part( 'content', 'single-product' ); ?>
+										
+								<?php endwhile; ?>
+							</div>
+						</section>
 						
-						<section class="row-fluid post_content">
+						<section class="row-fluid post_content box">
 						
-							<div class="span8">
+							<div class="span8 offset2">
 						
 								<?php the_content(); ?>
 								
 							</div>
-							
-							<?php get_sidebar('sidebar2'); // sidebar 2 ?>
 													
-						</section> <!-- end article header -->
+						</section>
+
+						<section class="row-fluid post_story">
+							<div class="span4 box">
+								Test
+							</div>
+							<div class="span8 box">
+								<?php echo $pfk_story; ?>
+							</div>
 						
 						<footer>
-			
-							<p class="clearfix"><?php the_tags('<span class="tags">' . __("Tags","pfk") . ': ', ', ', '</span>'); ?></p>
+							<div class="row-fluid box">
+								<div class="span8 offset2">
+									Testimonials
+								</div>
+							</div>
 							
 						</footer> <!-- end article footer -->
 					

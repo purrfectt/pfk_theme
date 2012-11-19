@@ -38,8 +38,10 @@ if ( ! isset( $content_width ) ) $content_width = 580;
 // Thumbnail sizes
 add_image_size( 'pfk-featured', 638, 300, true );
 add_image_size( 'pfk-featured-home', 970, 311, true);
+add_image_size( 'pfk-page', 300, 330, true);
 add_image_size( 'pfk-thumb-600', 600, 150, false );
 add_image_size( 'pfk-thumb-300', 300, 100, true );
+add_image_size( 'pfk-thumb-80', 80, 90, true );
 /* 
 to add more sizes, simply copy a line from above 
 and change the dimensions & name. As long as you
@@ -75,7 +77,7 @@ function pfk_register_sidebars() {
     ));
     
     register_sidebar(array(
-    	'id' => 'sidebar2',
+    	'id' => 'pfkcart',
     	'name' => 'Homepage Sidebar',
     	'description' => 'Used only on the homepage page template.',
     	'before_widget' => '<div id="%1$s" class="widget %2$s">',
@@ -125,7 +127,7 @@ function pfk_register_sidebars() {
     To call the sidebar in your template, you can just copy
     the sidebar.php file and rename it to your sidebar's name.
     So using the above example, it would be:
-    sidebar-sidebar2.php
+    sidebar-pfkcart.php
     
     */
 } // don't remove this bracket!
@@ -677,6 +679,25 @@ function get_wpbs_theme_options(){
       }
 } // end get_wpbs_theme_options function
 
+//Add PFK Gallery Functionality
 
+function activate_pfk_gallery() {
+  ?>
+    <script>
+      // Wrap the jQuery code in the generic function to allow use of
+      // the $ shortcut in WordPress's no-conflict jQuery environment
+      ( function ($) {
+        $('#ig-thumbs').delegate('img','hover', function(){   // When someone clicks on a thumbnail
+          $('#ig-hero').attr('src',$(this).attr('src').replace('-80x90','')); // Replace the Full Sized version of selected image
+          $('#ig-thumbs li img').removeClass("selected");   // Remove "selected" class from all thumbnails
+          $(this).addClass("selected");           // Add "selected" class to selected thumbnail
+          $('#ig-title').html($(this).attr('alt'));     // Replace the Title with Title selected image
+        });
+      })(jQuery);
+    </script>
+  <?php
+  }
+  // Hook into footer so gallery becomes active after page loads
+  add_action('wp_footer','activate_pfk_gallery');
 
 ?>

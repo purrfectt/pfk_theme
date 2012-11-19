@@ -87,7 +87,15 @@
 				
 	</head>
 	
-	<body <?php body_class(); ?>>
+	<?php //Get Background Image Choice
+		global $post;
+		$bg_choice = "back_50.jpg";
+		if(get_field('pfk_background_image_choice'))
+		{
+			$bg_choice = get_field("pfk_background_image_choice");
+		}		 
+	?>
+	<body <?php body_class(); ?> id="wrapper" style="background-image: url(<?php echo get_template_directory_uri(); ?>/library/images/<?php echo $bg_choice;?>); background-repeat: no-repeat; background-attachment: fixed; background-position: right top;">
 				
 		<header role="banner">
 		
